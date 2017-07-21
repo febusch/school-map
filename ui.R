@@ -1,6 +1,6 @@
 ######################################
 ## Author: Felix Busch
-## Date of Authorship: 11 July 2017
+## Date of Authorship: 21 July 2017
 ######################################
 
 ## ==== load packages

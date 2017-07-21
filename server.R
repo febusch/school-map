@@ -1,6 +1,6 @@
 ######################################
 ## Author: Felix Busch
-## Date of Authorship: 11 July 2017
+## Date of Authorship: 21 July 2017
 ######################################
 
 ## ==== load packages
@@ -51,20 +51,30 @@ library(tidyverse)
       .[[1]] %>%
       read.csv(col.names="Aufsichtsbehörden", stringsAsFactors = F, header=F)
     agencies <- agencies$Aufsichtsbehörden
-    
+
 ## ==== add html pop-up to data
+pop_name <- paste(sep="", "<b>", data$name, "</b>")
+pop_phone <- paste(sep="", "Telefon: ", "<p style='margin-left:5px; display:inline;'>", data$phone, "</p>")
+pop_fax <- paste(sep="", "Fax: ", "<p style='margin-left:24px; display:inline;'>", data$fax, "</p>")
+pop_email <- paste(sep="", "Email: ", "<p style='margin-left:14px; display:inline;'>", data$email, "</p>")
+pop_internet <- paste(sep="", "Web: ", "<p style='margin-left:19px; display:inline;'>", "<a target='_blank' href='http://", data$internet,"'>Link</a>", "</p>")
+pop_internet[is.na(data$internet)] <- paste(sep="", "Web: ", "<p style='margin-left:19px; display:inline;'>", "NA", "</p>")
+pop_nkids <- paste(sep="", "Anzahl Schüler: ", "<p style='margin-left:2px; display:inline;'>", data$n_kids, "</p>")
+pop_nteachers <- paste(sep="", "Anzahl Lehrer: ", "<p style='margin-left:9px; display:inline;'>", data$n_teachers, "</p>")
+pop_nclasses <- paste(sep="", "Anzahl Klassen: ", "<p style='margin-left:1px; display:inline;'>", data$n_classes, "</p>")
+
 data$popup <- paste(sep="<br/>",
-                  paste(sep="", "<b>", data$name, "</b>"),
-                  data$street,
-                  data$address,
-                  paste(sep="", "Telefon: ", "<p style='margin-left:5px; display:inline;'>", data$phone, "</p>"),
-                  paste(sep="", "Fax: ", "<p style='margin-left:24px; display:inline;'>", data$fax, "</p>"),
-                  paste(sep="", "Email: ", "<p style='margin-left:14px; display:inline;'>", data$email, "</p>"),
-                  paste(sep="", "Web: ", "<p style='margin-left:19px; display:inline;'>", "<a target='_blank' href='http://", data$internet,"'>Link</a>", "</p>"),
-                  paste(sep="", "Anzahl Schüler: ", "<p style='margin-left:2px; display:inline;'>", data$n_kids, "</p>"),
-                  paste(sep="", "Anzahl Lehrer: ", "<p style='margin-left:9px; display:inline;'>", data$n_teachers, "</p>"),
-                  paste(sep="", "Anzahl Klassen: ", "<p style='margin-left:1px; display:inline;'>", data$n_classes, "</p>")
-                    )
+                    pop_name,
+                    data$street,
+                    data$address,
+                    pop_phone,
+                    pop_fax,
+                    pop_email,
+                    pop_internet,
+                    pop_nkids,
+                    pop_nteachers,
+                    pop_nclasses
+  )
 
 ## ==== define server function
 server <- function(input, output){
@@ -77,7 +87,6 @@ server <- function(input, output){
   })
   
   # static text indicating doi
-  # output$text_doi <- "hello world"
   output$text_doi <- renderText("Data: <a target='_blank' href='http://doi.org/10.6084/m9.figshare.5117287'>Link</a>")
   
   # define output text
@@ -101,7 +110,7 @@ server <- function(input, output){
       sel4 <- vector("logical", dim(data)[1])
       sel4[1:length(sel4)] <- T
       
-      # input$seminar -> selector
+      # input$seminar -> logical selector
       if (input$seminar != "(kein Filter)") {
 
         # find index & construct seminar object name
@@ -113,7 +122,7 @@ server <- function(input, output){
         sel1 <- grepl("1",eval(parse(text = varname)))
       }
       
-      # input$type -> selector
+      # input$type -> logical selector
       if (input$type != "(kein Filter)") {
         
         # find index & construct seminar object name
@@ -125,7 +134,7 @@ server <- function(input, output){
         sel2 <- grepl("1",eval(parse(text = varname)))
       }      
       
-      # input$agency -> selector
+      # input$agency -> logical selector
       if (input$agency != "(kein Filter)") {
         
         # find index & construct seminar object name
@@ -137,9 +146,9 @@ server <- function(input, output){
         sel3 <- grepl("1",eval(parse(text = varname)))
       }     
       
-      # input$status -> selector
+      # input$status -> logical selector
       if (!is.null(input$status)) {
-        sel4 <- grepl(paste(input$status,collapse="|"),data$status) # build logical vector
+        sel4 <- grepl(paste(input$status,collapse="|"),data$status)
       }
       else { # show nothing if none is selected
         sel1[1:length(sel1)] <- F
@@ -174,7 +183,7 @@ server <- function(input, output){
     else {
       # clear markers
       leafletProxy("mymap") %>%
-        clearMarkers() # if no clusterOptions used, then this must be clearMarkers()
+        clearMarkers()
     }
     
   }) #close event listener
