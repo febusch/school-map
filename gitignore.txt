@@ -1,0 +1,19 @@
+# Ignore RProject files
+*.httr-oauth
+.httr-oauth
+
+# CSV files
+*.csv
+*.txt
+*.tab
+
+# Documents
+*.pdf
+*.pptx
+*.doc
+*.docx
+*.ppt
+
+# Ignore all xlsx files
+*.xlsx
+*.xls
