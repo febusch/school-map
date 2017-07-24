@@ -1,0 +1,14 @@
+body {
+    background-color: #E7ECEF;
+}
+
+.doi {
+    font-size: 70%;
+    margin-top: 1em;
+    text-align: right;
+}
+
+.results-text {
+    margin-top: 1em;
+    font-weight: bold;
+}

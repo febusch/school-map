@@ -41,24 +41,7 @@ deposit_details <- data.frame(split(deposit_details, names(deposit_details)), st
   agencies <- agencies$Aufsichtsbehörden
 
 ## ==== define UI
-fillPage(
-  
-  tags$head(
-    tags$style(HTML("
-
-      .doi {
-        font-size: 70%;
-        margin-top: 1em;
-        text-align: right
-      }
-
-      .results-text {
-        margin-top: 1em;
-        font-weight: bold
-      }
-
-    "))
-  ),
+fillPage(theme="styles.css",
   
   # sidebar panel includes forms
   sidebarPanel(
